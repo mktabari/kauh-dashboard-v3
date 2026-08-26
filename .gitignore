@@ -11,6 +11,15 @@ sqliteDB
 /.vscode
 oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
 sqlite3.exe
+working backages
+.vscode
+last_yml
+drizzle copy
+package copy 2.json
+package copy.json
+Dockerfile_old
+Dockerfile_1
+Dockerfile copy
 
 # OS
 .DS_Store
