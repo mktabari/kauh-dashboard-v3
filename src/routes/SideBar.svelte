@@ -206,6 +206,12 @@
           variant="outline"
           size="icon"
           class="bg-background/20 hover:bg-transparent border-border/50 hidden md:flex"
+          onclick={() => {
+            window.open(
+              "https://github.com/mktabari/kauh-dashboard-v3",
+              "_blank",
+            );
+          }}
         >
           <Github class="size-6" />
         </Button>

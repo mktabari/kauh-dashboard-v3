@@ -31,7 +31,17 @@ export const socket = {
 
   message(peer, message) {
     const connection = connections.get(peer);
-    connection.shell.write(String(message));
+    try {
+      let msg = JSON.parse(message);
+      if (dev) console.log("message", msg);
+      if (msg.type === "resize") {
+        connection.shell.setWindow(msg.data.rows, msg.data.cols);
+      } else if (msg.type === "input") {
+        connection.shell.write(msg.data);
+      }
+    } catch (error) {
+      console.log("error in terminal ws message", error);
+    }
   },
 
   close(peer, event) {

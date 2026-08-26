@@ -432,17 +432,22 @@ stream stopped`;
     }),
   );
   let grouwthRate = $derived(
-    (
-      (1000 *
-        60 *
-        60 *
-        24 *
-        (filteredData[filteredData.length - 1]?.value -
-          filteredData[0]?.value)) /
-      (filteredData[filteredData.length - 1]?.date - filteredData[0]?.date)
-    ).toFixed(2),
+    filteredData.length === 1
+      ? filteredData[0]?.value
+      : filteredData.length > 1
+        ? (
+            (1000 *
+              60 *
+              60 *
+              24 *
+              (filteredData[filteredData.length - 1]?.value -
+                filteredData[0]?.value)) /
+            (filteredData[filteredData.length - 1]?.date -
+              filteredData[0]?.date)
+          ).toFixed(2)
+        : 0,
   );
-  // $inspect(grouwthRate);
+  // $inspect(grouwthRate, filteredData);
 </script>
 
 <header class="flex h-16 shrink-0 items-center gap-2">
@@ -690,6 +695,7 @@ stream stopped`;
                       Growth Rate :
                       <div class="translate-y-0.5">
                         <Counter
+                          // places={[100, 10, 1, ".", 0.1]}
                           value={grouwthRate}
                           gradientFrom="transparent"
                           fontSize={15}

@@ -46,12 +46,22 @@
     // });
     term = new xterm.Terminal();
     term.options.cursorBlink = true;
-    term.options.col = 120;
+    // term.options.col = 120;
     fitAddon = new FitAddon();
     term.loadAddon(fitAddon);
     term.open(terminalElement);
     term.onData((data) => {
-      socket.send(data);
+      // console.log("data", data);
+      // socket.send(data);
+      socket.send(JSON.stringify({ type: "input", data: data }));
+    });
+    term.onResize((size) => {
+      socket.send(
+        JSON.stringify({
+          type: "resize",
+          data: { cols: size.cols, rows: size.rows },
+        }),
+      );
     });
     setTimeout(() => {
       fitAddon.fit();
@@ -60,8 +70,30 @@
     window.addEventListener("resize", () => {
       setTimeout(() => {
         fitAddon.fit();
-        console.log("resize", term?.options);
       }, 50);
+    });
+    terminalElement.addEventListener("mouseup", () => {
+      if (term.hasSelection()) {
+        const selectedText = term.getSelection();
+        navigator.clipboard
+          .writeText(selectedText)
+          .then(() => {
+            term.clearSelection();
+          })
+          .catch((err) => console.error("Failed to copy text: ", err));
+      }
+    });
+
+    terminalElement.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      navigator.clipboard
+        .readText()
+        .then((text) => {
+          if (text) {
+            socket.send(JSON.stringify({ type: "input", data: text }));
+          }
+        })
+        .catch((err) => console.error("Failed to read clipboard: ", err));
     });
   });
   onDestroy(() => {

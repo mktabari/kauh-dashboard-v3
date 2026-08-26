@@ -81,7 +81,7 @@ CMD ["pm2-runtime", "pm2.config.cjs"]
 # docker save -o C:\docker_image_tars\kauhdb_v3.0.tar kauhdb:v3.0
 # docker load -i kauhdb_v3.0.tar
 # docker volume create --name kd-sqlite-db3 --opt type=none --opt device=/docker_volumes/sqliteDB3 --opt o=bind
-# docker run -d -p 3030:3000  --name kauhdb3 --mount source=kd-sqlite-db3,target=/app/sqliteDB -e ADDRESS_HEADER=x-forwarded-for -e XFF_DEPTH=1 kauhdb:v3.0
+# docker run -d -p 3030:3000  --name kauhdb3 --mount source=kd-sqlite-db3,target=/app/sqliteDB -e NODE_NO_WARNINGS=1 -e ADDRESS_HEADER=x-forwarded-for -e XFF_DEPTH=1 kauhdb:v3.0
 
 
 # docker volume create --driver local --opt type=none --opt o=bind --opt device=/docker_volumes/sqliteDB3 kd-sqlite-db3

@@ -1,5 +1,5 @@
 <script>
-  import { motionValue } from "motion";
+  import { motionValue, animate } from "motion";
 
   let {
     value,
