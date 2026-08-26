@@ -1,0 +1,59 @@
+# --- Stage 1: Build the application ---
+FROM node:22-slim AS builder
+
+
+WORKDIR /app
+
+# Enable corepack to automatically use the correct pnpm version
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy lockfile and package manifest first to leverage Docker layer caching
+COPY package.json pnpm-lock.yaml ./
+
+# RUN THE INSTALLATION BYPASSING POLICIES VIA ENVIRONMENT VARIABLES
+RUN pnpm ci
+
+
+# Copy the rest of the application source code
+COPY . .
+
+# Build the SvelteKit application
+RUN pnpm build
+
+# Prune devDependencies to keep production image light
+RUN pnpm prune --prod
+
+CMD ["node", "build/index.js"]
+# --- Stage 2: Run the application ---
+# FROM node:22-slim AS runner
+
+# WORKDIR /tmp
+# RUN apt-get update && apt-get install -y \
+#     alien \
+#     libaio1 \
+#     iputils-ping \
+#     && rm -rf /var/lib/apt/lists/*
+# ADD oracle-instantclient*.rpm /tmp/
+# RUN alien -i --scripts oracle-instantclient*.rpm 
+# RUN rm -f oracle-instantclient*.rpm && apt-get -y autoremove && apt-get -y clean
+# WORKDIR /usr/lib/oracle/11.2/client64/lib/
+# RUN rm -rf *jdbc* *occi* *mysql* *jar
+# RUN echo /usr/lib/oracle/11.2/client64/lib > /etc/ld.so.conf.d/oracle-instantclient11.2.conf && ldconfig
+
+
+# WORKDIR /app
+
+# # Copy production artifacts from the builder stage
+# COPY --from=builder /app/package.json ./
+# COPY --from=builder /app/node_modules ./node_modules
+# COPY --from=builder /app/build ./build
+
+# # Set runtime environment variables
+# ENV NODE_ENV=production
+# ENV PORT=3000
+
+# # Expose the application port
+# EXPOSE 3000
+
+# # Start the application using Node directly
+# CMD ["node", "build/index.js"]
